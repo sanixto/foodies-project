@@ -27,7 +27,7 @@ export default function ImagePicker({ label, name }: ImagePickerProps) {
       return;
     }
 
-    const fileReader = new FileReader();
+    const fileReader: FileReader = new FileReader();
 
     fileReader.onload = () => {
       const { result } = fileReader;

@@ -1,7 +1,23 @@
 import ImagePicker from '@/components/meals/image-picker';
 import styles from './page.module.css';
+import { title } from 'process';
+import Meal from '@/interfaces/meal.interface';
 
 export default function ShareMealPage() {
+  const shareMel = async (formData: FormData) => {
+    'use server';
+
+    const meal: Meal = {
+      title: formData.get('title')?.toString()!,
+      image: formData.get('image')?.toString()!,
+      summary: formData.get('summary')?.toString()!,
+      instructions: formData.get('instructions')?.toString()!,
+      creator: formData.get('creator')?.toString()!,
+      creator_email: formData.get('email')?.toString()!,
+    }
+
+    console.log(meal)
+  }
   return (
     <>
       <header className={styles.header}>
@@ -11,7 +27,7 @@ export default function ShareMealPage() {
         <p>Or any other meal you feel needs sharing!</p>
       </header>
       <main className={styles.main}>
-        <form className={styles.form}>
+        <form className={styles.form} action={shareMel}>
           <div className={styles.row}>
             <p>
               <label htmlFor="name">Your name</label>
@@ -39,7 +55,7 @@ export default function ShareMealPage() {
               required
             ></textarea>
           </p>
-          <ImagePicker label={''} name={''} />
+          <ImagePicker label={'Your image'} name={'image'} />
           <p className={styles.actions}>
             <button type="submit">Share Meal</button>
           </p>

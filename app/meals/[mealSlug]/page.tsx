@@ -15,7 +15,7 @@ export default async function MealPage({ params }: { params: { mealSlug: string 
     <>
       <header className={styles.header}>
         <div className={styles.image}>
-          <Image src={meal.image} alt={''} fill />
+          <Image src={meal.image as string} alt={''} fill />
         </div>
         <div className={styles.headerText}>
           <h1>{meal.title}</h1>

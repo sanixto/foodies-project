@@ -31,7 +31,7 @@ export async function saveMeal(meal: Meal) {
     if (error) throw new Error('Saving image failed!');
   });
 
-  meal.image = `/images/${fileName}`
+  meal.image = `/images/${fileName}`;
 
   db.prepare(`
     INSERT INTO meals

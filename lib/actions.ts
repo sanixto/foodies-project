@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import Meal from "@/interfaces/meal.interface";
 import { saveMeal } from "./meals";
+import { revalidatePath } from "next/cache";
 
 function isInvalidText(text: string) {
   return !text || text.trim() === '';
@@ -36,7 +37,7 @@ export async function shareMeal(prevState: FormState, formData: FormData) {
     isInvalidText(meal.creator) ||
     isInvalidText(meal.creator_email) ||
     isInvalidImage(meal.image as File) ||
-    meal.creator_email.includes('@')
+    !meal.creator_email.includes('@')
   ) {
     return {
         message: 'Invalid input',
@@ -44,6 +45,7 @@ export async function shareMeal(prevState: FormState, formData: FormData) {
   }
 
   saveMeal(meal);
+  revalidatePath('/meals');
   redirect('/meals');
 }
 

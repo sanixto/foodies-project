@@ -5,7 +5,19 @@ import { redirect } from "next/navigation";
 import Meal from "@/interfaces/meal.interface";
 import { saveMeal } from "./meals";
 
-export async function shareMeal(formData: FormData) {
+function isInvalidText(text: string) {
+  return !text || text.trim() === '';
+}
+
+function isInvalidImage(image: File) {
+  return !image || image.size === 0;
+}
+
+interface FormState {
+  message: string | null;
+}
+
+export async function shareMeal(prevState: FormState, formData: FormData) {
   'use server';
 
   const meal: Meal = {
@@ -15,6 +27,20 @@ export async function shareMeal(formData: FormData) {
     instructions: formData.get('instructions')?.toString()!,
     creator: formData.get('name')?.toString()!,
     creator_email: formData.get('email')?.toString()!,
+  }
+
+  if (
+    isInvalidText(meal.title) ||
+    isInvalidText(meal.summary) ||
+    isInvalidText(meal.instructions) ||
+    isInvalidText(meal.creator) ||
+    isInvalidText(meal.creator_email) ||
+    isInvalidImage(meal.image as File) ||
+    meal.creator_email.includes('@')
+  ) {
+    return {
+        message: 'Invalid input',
+    };
   }
 
   saveMeal(meal);

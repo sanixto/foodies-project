@@ -15,7 +15,7 @@ function isInvalidImage(image: File) {
 }
 
 interface FormState {
-  message: string | null;
+  message: string,
 }
 
 export async function shareMeal(prevState: FormState, formData: FormData) {
@@ -44,7 +44,7 @@ export async function shareMeal(prevState: FormState, formData: FormData) {
     };
   }
 
-  saveMeal(meal);
+  await saveMeal(meal);
   revalidatePath('/meals');
   redirect('/meals');
 }

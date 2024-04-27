@@ -1,19 +1,20 @@
-import fs from 'node:fs';
 import sql from 'better-sqlite3';
 import slugify from 'slugify';
 import xss from 'xss';
+import { S3 } from '@aws-sdk/client-s3';
 
 import Meal from '@/interfaces/meal.interface';
 
+const s3 = new S3({
+  region: 'us-east-1'
+});
 const db = sql('meals.db');
 
 export async function getMeals(): Promise<Meal[]> {
-  await new Promise(res => setTimeout(res, 2000));
   return db.prepare('SELECT * FROM meals').all() as Meal[];
 }
 
 export async function getMeal(slug: string): Promise<Meal> {
-  // await new Promise(res => setTimeout(res, 2000));
   return db.prepare('SELECT * FROM meals WHERE slug = ?').get(slug) as Meal;
 }
 
@@ -24,14 +25,16 @@ export async function saveMeal(meal: Meal) {
   const extension: string | undefined = (meal.image as File).name.split('.').pop();
   const fileName: string = `${meal.slug}.${extension}`;
 
-  const stream: fs.WriteStream = fs.createWriteStream(`public/images/${fileName}`);
-  const bufferedImage = await (meal.image as File).arrayBuffer();
+  const bufferedImage: ArrayBuffer = await (meal.image as File).arrayBuffer();
 
-  stream.write(Buffer.from(bufferedImage), (error) => {
-    if (error) throw new Error('Saving image failed!');
+  await s3.putObject({
+    Bucket: process.env.AWS_IMAGES_BUCKET,
+    Key: fileName,
+    Body: Buffer.from(bufferedImage),
+    ContentType: (meal.image as unknown as File).type,
   });
 
-  meal.image = `/images/${fileName}`;
+  meal.image = fileName;
 
   db.prepare(`
     INSERT INTO meals

@@ -9,7 +9,7 @@ export default function MealItem({ title, slug, image, summary, creator }: Meal)
     <article className={styles.meal}>
       <header>
         <div className={styles.image}>
-          <Image src={image as string} alt={title} fill />
+          <Image src={`https://${process.env.AWS_IMAGES_HOSTNAME}/${image}`} alt={title} fill />
         </div>
         <div className={styles.headerText}>
           <h2>{title}</h2>

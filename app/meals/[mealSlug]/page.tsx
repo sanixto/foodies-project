@@ -1,8 +1,19 @@
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 
 import styles from './page.module.css';
 import { getMeal } from '@/lib/meals';
-import { notFound } from 'next/navigation';
+
+export async function generateMetadata({ params }: { params: { mealSlug: string } }): Promise<Metadata> {
+  const meal = await getMeal(params.mealSlug);
+  if (!meal) notFound();
+
+  return {
+    title: meal.title,
+    description: meal.summary,
+  };
+}
 
 export default async function MealPage({ params }: { params: { mealSlug: string } }) {
   const meal = await getMeal(params.mealSlug);
